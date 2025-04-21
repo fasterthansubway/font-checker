@@ -1,0 +1,85 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>폰트 확인기</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        #drop-zone {
+            border: 3px dashed #ccc;
+            padding: 3rem;
+            background-color: #f9f9f9;
+            margin-top: 2rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>📁 폰트 확인기</h1>
+    <p>여기에 PPT 또는 HWP 파일을 끌어다 놓으세요</p>
+
+    <!-- ✅ 파일 업로드 폼 -->
+    <form id="upload-form" method="POST" action="/upload" enctype="multipart/form-data">
+        <input type="file" name="file" id="file-input" style="display:none">
+    </form>
+
+    <div id="drop-zone">파일을 여기에 드롭</div>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const form = document.getElementById('upload-form');
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = '#eef';
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.backgroundColor = '#f9f9f9';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = '#f9f9f9';
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                // 드래그된 파일을 숨겨진 input에 삽입하고 form 전송
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(files[0]);
+                fileInput.files = dataTransfer.files;
+                form.submit(); // 🔥 서버로 전송!
+            }
+        });
+    </script>
+
+    
+    {% if fonts is not none %}
+    <h2>🔍 분석 결과</h2>
+    {% if fonts %}
+        {% for font in fonts %}
+            <div>{{ font }} (<a href="#">다운로드</a>)</div>
+        {% endfor %}
+    {% else %}
+        <p>모든 글꼴이 설치되어 있습니다! 🎉</p>
+    {% endif %}
+{% endif %}
+
+
+    <footer style="margin-top: 3rem; font-size: 0.9rem; color: #777;">
+        ⓒ 2025 fasterthansubway <br>
+        본 사이트는 비상업적 목적을 위한 것이며, 업로드된 문서 및 글꼴은 사용자에게 책임이 있습니다. <br>
+        글꼴 다운로드 링크는 외부 사이트로 연결되며, 해당 글꼴의 사용 조건은 각 사이트의 라이선스를 따릅니다
+    </footer>
+</body>
+
+</html>
